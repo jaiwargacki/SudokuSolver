@@ -15,6 +15,12 @@ public class SudokuBoard implements Configuration {
     private static final char BLANK_SPACE_CHAR = ' ';
     /** Newline char. */
     private static final char NEWLINE_CHAR = '\n';
+    /** Const indicating row. */
+    private static final char ROW = 'R';
+    /** Const indicating column. */
+    private static final char COL = 'C';
+    /** Const indicating region. */
+    private static final char REG = 'E';
 
 
     /** 2D array of char representing sudoku board. */
@@ -177,7 +183,7 @@ public class SudokuBoard implements Configuration {
      */
     @Override
     public boolean isValid() {
-        return false;
+        return check(ROW) && check(COL) && check(REG);
     }
 
     /**
@@ -187,5 +193,37 @@ public class SudokuBoard implements Configuration {
     @Override
     public boolean isGoal() {
         return false;
+    }
+
+    /**
+     * Checks the puzzle's validity in a particular way.
+     * @param type type of check row, column, or region.
+     * @return true if valid in that regard, false otherwise.
+     */
+    private boolean check(char type) {
+        Set<Character> digits;
+        char current;
+        for (int a = 0; a < 9; a++) {
+            digits = new HashSet<>();
+            for (int b = 0; b < 9; b++) {
+                if (type == ROW) {
+                    current = board[a][b];
+                } else if (type == COL){
+                    current = board[b][a];
+                } else {
+                    int row = (3 * Math.floorDiv(a, 3)) + Math.floorDiv(b, 3);
+                    int col =  (3 * (a % 3)) + (b % 3);
+                    current = board[row][col];
+                }
+                if (current != BLANK_SPACE_CHAR) {
+                    if (digits.contains(current)) {
+                        return false;
+                    } else {
+                        digits.add(current);
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
