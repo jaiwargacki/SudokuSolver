@@ -1,4 +1,4 @@
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Configuration representing a sudoku board.
@@ -6,13 +6,96 @@ import java.util.Collection;
  */
 public class SudokuBoard implements Configuration {
 
+    /** Valid digits (1-9). */
+    private static final Set<Character> VALID_DIGITS =
+            Set.of('1', '2', '3', '4', '5', '6', '7', '8', '9');
+    /** Blank space input char. */
+    private static final char BLANK_SPACE_INPUT_CHAR = 'X';
+    /** Blank space char. */
+    private static final char BLANK_SPACE_CHAR = ' ';
+    /** Newline char. */
+    private static final char NEWLINE_CHAR = '\n';
+
+
+    /** 2D array of char representing sudoku board. */
+    private final char[][] board;
+
+    /**
+     * Sub class to act as char iterator for parsing input string.
+     */
+    private static class CharacterIterator implements Iterator<Character> {
+
+        /** Input string to iterate over. */
+        private final String str;
+        /** The input string's length. */
+        private final int len;
+        /** Current position in string. */
+        private int position;
+
+        /**
+         * Constructor for CharacterIterator.
+         * @param str the string to iterate over.
+         */
+        public CharacterIterator(String str) {
+            this.str = str;
+            this.len = str.length();
+            this.position = 0;
+        }
+
+        /**
+         * Determine if there is another char in string.
+         * @return true if there is another char in string, false otherwise.
+         */
+        public boolean hasNext() {
+            return position < len;
+        }
+
+        /**
+         * Get the next char.
+         * @return the next char.
+         */
+        public Character next() {
+            return str.charAt(position++);
+        }
+
+        /**
+         * Remove is not supported by this class.
+         */
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     /**
      * Constructor for sudoku board.
      * @param stringBoard string of sudoku board.
-     *                    81 char (1-9 or X). X is used for blank space. Whitespace is ignored.
+     *                    81 char (1-9 or X). X is used for blank space.
+     *                    Whitespace and all other chars are ignored.
+     * @throws IllegalArgumentException if not enough chars are provided.
      */
-    public SudokuBoard(String stringBoard) {
-
+    public SudokuBoard(String stringBoard) throws IllegalArgumentException {
+        board = new char[9][9];
+        int counter = 0;
+        char next;
+        int row = 0;
+        int col = 0;
+        CharacterIterator iterator = new CharacterIterator(stringBoard);
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            if (VALID_DIGITS.contains(next)) {
+                board[row][col] = next;
+            } else if (next == BLANK_SPACE_INPUT_CHAR) {
+                board[row][col] = BLANK_SPACE_CHAR;
+            } else {
+                continue;
+            }
+            counter++;
+            row = Math.floorDiv(counter, 9);
+            col = counter % 9;
+        }
+        if (counter != 81) {
+            throw new IllegalArgumentException("Not enough characters provided.");
+        }
     }
 
     /**
@@ -21,7 +104,24 @@ public class SudokuBoard implements Configuration {
      */
     @Override
     public String toString() {
-        return null;
+        StringBuilder s = new StringBuilder();
+        int counter_1 = 0;
+        for (char[] row : board) {
+            int counter_2 = 0;
+            for (char c : row) {
+                s.append(c);
+                counter_2++;
+                if (counter_2 != 0 && counter_2 != 9 && counter_2 % 3 == 0) {
+                    s.append(BLANK_SPACE_CHAR);
+                }
+            }
+            s.append(NEWLINE_CHAR);
+            counter_1++;
+            if (counter_1 != 0 && counter_1 != 9 && counter_1 % 3 == 0) {
+                s.append(NEWLINE_CHAR);
+            }
+        }
+        return s.toString();
     }
 
     /**
