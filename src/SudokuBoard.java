@@ -19,6 +19,8 @@ public class SudokuBoard implements Configuration {
 
     /** 2D array of char representing sudoku board. */
     private final char[][] board;
+    /** Counter to keep track of where next successors should be generated. */
+    private int successorsCounter;
 
     /**
      * Sub class to act as char iterator for parsing input string.
@@ -74,7 +76,8 @@ public class SudokuBoard implements Configuration {
      * @throws IllegalArgumentException if not enough chars are provided.
      */
     public SudokuBoard(String stringBoard) throws IllegalArgumentException {
-        board = new char[9][9];
+        this.board = new char[9][9];
+        this.successorsCounter = 0;
         int counter = 0;
         char next;
         int row = 0;
@@ -95,6 +98,22 @@ public class SudokuBoard implements Configuration {
         }
         if (counter != 81) {
             throw new IllegalArgumentException("Not enough characters provided.");
+        }
+    }
+
+    /**
+     * Constructor for sudoku board that makes a deep copy of another board.
+     * @param other another sudoku board.
+     */
+    public SudokuBoard(SudokuBoard other) {
+        this.board = new char[9][9];
+        this.successorsCounter = other.successorsCounter + 1;
+        int row;
+        int col;
+        for (int counter = 0; counter < 81; counter++) {
+            row = Math.floorDiv(counter, 9);
+            col = counter % 9;
+            this.board[row][col] = other.board[row][col];
         }
     }
 
@@ -130,7 +149,26 @@ public class SudokuBoard implements Configuration {
      */
     @Override
     public Collection<Configuration> getSuccessors() {
-        return null;
+        List<Configuration> successors = new ArrayList<>();
+        // Find next place to generate successors.
+        int row = Math.floorDiv(successorsCounter, 9);
+        int col = successorsCounter % 9;
+        while (board[row][col] != BLANK_SPACE_CHAR) {
+            successorsCounter++;
+            if (successorsCounter > 81) {
+                return successors;
+            } else {
+                row = Math.floorDiv(successorsCounter, 9);
+                col = successorsCounter % 9;
+            }
+        }
+        // Generate 9 successors for the found location.
+        for (char digit :VALID_DIGITS) {
+            SudokuBoard successor = new SudokuBoard(this);
+            successor.board[row][col] = digit;
+            successors.add(successor);
+        }
+        return successors;
     }
 
     /**
