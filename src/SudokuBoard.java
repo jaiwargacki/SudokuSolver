@@ -7,6 +7,24 @@ import java.util.Collection;
 public class SudokuBoard implements Configuration {
 
     /**
+     * Constructor for sudoku board.
+     * @param stringBoard string of sudoku board.
+     *                    81 char (1-9 or X). X is used for blank space. Whitespace is ignored.
+     */
+    public SudokuBoard(String stringBoard) {
+
+    }
+
+    /**
+     * Gets string version of the sudoku board.
+     * @return string version of the sudoku board.
+     */
+    @Override
+    public String toString() {
+        return null;
+    }
+
+    /**
      * Gets the successors of this sudoku board.
      * @return a collection of this sudoku board's successors.
      */
