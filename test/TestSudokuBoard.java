@@ -149,6 +149,22 @@ public class TestSudokuBoard {
         boolean excepted = board.isGoal();
         assertTrue(excepted);
     }
+    @Test
+    public void test_isGoal_2() {
+        String input = "827154396965327148341689752593468271472513" +
+                "689618972435X86235914154796823239841567";
+        SudokuBoard board = new SudokuBoard(input);
+        boolean excepted = board.isGoal();
+        assertFalse(excepted);
+    }
+    @Test
+    public void test_isGoal_3() {
+        String input = "827154396965327148341689752593468271472513" +
+                "689618972438786235914154796823239841567";
+        SudokuBoard board = new SudokuBoard(input);
+        boolean excepted = board.isGoal();
+        assertFalse(excepted);
+    }
 
     // Test getSuccessors
 }
