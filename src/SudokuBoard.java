@@ -192,7 +192,7 @@ public class SudokuBoard implements Configuration {
      */
     @Override
     public boolean isGoal() {
-        return false;
+        return isValid() && isFull();
     }
 
     /**
@@ -222,6 +222,23 @@ public class SudokuBoard implements Configuration {
                         digits.add(current);
                     }
                 }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the sudoku board is full.
+     * @return true if the board is full, false otherwise.
+     */
+    private boolean isFull() {
+        int row;
+        int col;
+        for (int counter = 0; counter < 81; counter++) {
+            row = Math.floorDiv(counter, 9);
+            col = counter % 9;
+            if (board[row][col] == BLANK_SPACE_CHAR) {
+                return false;
             }
         }
         return true;
